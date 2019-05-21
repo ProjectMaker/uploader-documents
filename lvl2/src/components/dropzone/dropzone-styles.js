@@ -8,6 +8,7 @@ export default theme => ({
     maxWidth: '720px',
     padding: '54px',
     boxSizing: 'border-box',
+    marginBottom: '20px',
 
     '&.default': {
       borderStyle: 'solid'

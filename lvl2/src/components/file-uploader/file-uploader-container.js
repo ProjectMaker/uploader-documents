@@ -2,42 +2,45 @@ import React, { Component } from 'react'
 import axios from 'axios'
 
 import FileUploader from './file-uploader'
-import {uploadFileBinary} from '../../services/uploader'
-import {UPLOADING_START, UPLOADING_END, UPLOADING_ERROR} from "../../constants";
+import {uploadFile} from '../../services/uploader'
+import {UPLOADING_START, UPLOADING_CANCELED, UPLOADING_ERROR, UPLOADING_END} from "../../constants"
+
+const CancelToken = axios.CancelToken
 
 class FileUploaderContainer extends Component {
   state = {
     file: null,
-    uploadingStatus: null,
-    source: null
+    uploadingStatus: null
   }
 
+  cancelSource = null
+
   handleCancel = () => {
-    this.state.source.cancel()
+    this.cancelSource.cancel()
   }
+
   handleUpload = (file) => {
     this.setState({file, uploadingStatus: UPLOADING_START})
-    const fr = new FileReader()
-    fr.onload = (r) => {
-      const CancelToken = axios.CancelToken
-      const source = CancelToken.source()
-      this.setState(
-        () => ({source}),
-        () => {
-          uploadFileBinary(fr.result, source.token)
-            .then(r => this.setState({uploadingStatus: UPLOADING_END}))
-            .catch(err => this.setState({uploadingStatus: UPLOADING_ERROR}))
+    this.cancelSource = CancelToken.source()
+    uploadFile(file, this.cancelSource.token)
+      .then(response => this.setState({uploadingStatus: UPLOADING_END}))
+      .catch(err => {
+        if (err === UPLOADING_CANCELED) {
+          this.setState({uploadingStatus: UPLOADING_CANCELED})
+        } else {
+          this.setState({uploadingStatus: UPLOADING_ERROR})
         }
-      )
-    }
-    fr.readAsBinaryString(file)
+      })
   }
 
   render() {
     const {file, uploadingStatus} = this.state
-    console.log(uploadingStatus)
     return (
-      <FileUploader file={file} upload={this.handleUpload} uploadingStatus={uploadingStatus} cancel={this.handleCancel}/>
+      <FileUploader
+        file={file}
+        upload={this.handleUpload}
+        uploadingStatus={uploadingStatus}
+        cancel={this.handleCancel}/>
     )
   }
 }

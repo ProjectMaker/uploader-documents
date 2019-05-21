@@ -1,18 +1,27 @@
 import React from 'react'
+import {withStyles} from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography/Typography'
 
-import { UPLOADING_END } from '../../constants'
+import {UPLOADING_START, UPLOADING_END, UPLOADING_ERROR, UPLOADING_CANCELED} from '../../constants'
 import DropZone from '../dropzone'
+import ButtonCancel from '../button-cancel'
+import styles from './file-uploader-styles'
 
-const FileUploader = ({upload, file, uploadingStatus}) => (
+const FileUploader = ({classes, upload, file, uploadingStatus, cancel}) => (
   <div>
     <DropZone onDrop={upload}/>
-    {file && uploadingStatus !== UPLOADING_END && (
-      <div>
-        <Typography>Uploading file : {file.name} {uploadingStatus}</Typography>
+    {file && (
+      <div className={classes.uploadingFile}>
+        <Typography>{file.name}</Typography>
+        <div className={classes.uploadingStatus}>
+          {uploadingStatus === UPLOADING_END && <Typography className="success">Uploading end</Typography>}
+          {uploadingStatus === UPLOADING_ERROR && <Typography className="error">Uploading error</Typography>}
+          {uploadingStatus === UPLOADING_CANCELED && <Typography className="error">Uploading canceled</Typography>}
+          {uploadingStatus === UPLOADING_START && <ButtonCancel onClick={cancel}/>}
+        </div>
       </div>
     )}
   </div>
 )
 
-export default FileUploader
+export default withStyles(styles)(FileUploader)
