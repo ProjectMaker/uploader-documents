@@ -21,6 +21,7 @@
 
 lvl1/node_modules/
 lvl2/node_modules/
+lvl3/node_modules/
 
 npm-debug.log*
 yarn-debug.log*
