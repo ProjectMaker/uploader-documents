@@ -8,14 +8,39 @@ import {
 } from '../constants'
 
 export const uploadFile = async (file, cancelToken) => {
+  console.log(file)
   try {
-    await axios.post(API_UPLOAD_URL, file, {
+    // await fetch(API_UPLOAD_URL, { method: 'POST', body: file})
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const result = e.target.result;
+      console.log(`result: ${result} of type ${typeof(result)}`);
+      const blob = new Blob([reader.result], { type: 'image/png' })
+      await axios.post(API_UPLOAD_URL, blob, {
+        headers: {
+          'Content-Type': 'image/png'
+        }
+      })
+    }
+
+    reader.readAsDataURL(file)
+
+    // await fetch(API_UPLOAD_URL, { method: 'POST', body: file})
+    /*
+    const form = new FormData()
+    form.append('file', file, {
+      filename: 'popo.png',
+      contentType: 'image/png',
+    });
+
+
+    await axios.post(API_UPLOAD_URL, form, {
       cancelToken,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
     })
+    */
   } catch (err) {
+    console.log(err)
     if (axios.isCancel(err)) {
       throw new Error(UPLOADING_CANCELED)
     }

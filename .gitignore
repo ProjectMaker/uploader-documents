@@ -25,6 +25,9 @@ lvl3/node_modules/
 lvl4/node_modules/
 lvl4/build/
 lvl4/cache/
+lvl5/node_modules/
+lvl5/build/
+lvl5/cache/
 
 npm-debug.log*
 yarn-debug.log*
