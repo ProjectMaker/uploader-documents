@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography/Typography"
 
 import styles from './dropzone-styles'
 
-const DropZone = ({classes, dragging}) => {
+const DropZone = ({classes, dragging, onChooseFile}) => {
   let inputElement
   return (
     <div className={classNames(classes.dropzone, dragging ? 'dragging' : 'default')} onClick={() => inputElement.click()}>
